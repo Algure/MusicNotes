@@ -13,10 +13,9 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.RemoteViews
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.algure.musicnotes.objects.MusicData
+import androidx.core.app.NotificationManagerCompat
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,14 +37,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.channel_name)
-            val descriptionText = getString(R.string.channel_description)
+            val name = "getString(R.string.channel_name)"
+            val descriptionText = "getString(R.string.channel_description)"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
             val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -56,11 +55,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @SuppressLint("RemoteViewLayout")
     fun showNotificationWithDets(textContent:String, textTitle:String){
         val musicData = MusicData(
             title = "Test title",
             description = "srfes fdvsefr sfsfs fsefk srfserf fesrf sfrserf knnkkk kk ",
+            color = Color.CYAN
         )
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0,
@@ -68,32 +67,35 @@ class MainActivity : AppCompatActivity() {
 
         createNotificationChannel()
 
-        val notificationLayout = RemoteViews(packageName, R.layout.notification_small)
-        val notificationLayoutExpanded = RemoteViews(packageName, R.layout.notification_large)
+        val notificationLayout = RemoteViews(getPackageName(), R.layout.notification_small)
+        val notificationLayoutExpanded = RemoteViews(getPackageName(), R.layout.notification_large)
 
-//        loadSmallNotification(not ificationLayout, musicData)
-//        loadExpandedDetails(notificationLayoutExpanded, musicData)
+        loadSmallNotification(notificationLayout, musicData)
+        loadExpandedDetails(notificationLayoutExpanded, musicData)
+
         notificationLayout.setTextViewText(R.id.notification_title, musicData.title)
 
-        notificationLayoutExpanded.setTextViewText(R.id.title, musicData.title)
-        notificationLayoutExpanded.setTextViewText(R.id.subtitle, musicData.description)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            notificationLayoutExpanded.setColorAttr(R.id.line1,  "",  musicData.color)
-        }
+//        notificationLayoutExpanded.setTextViewText(R.id.title, musicData.title)
+//        notificationLayoutExpanded.setTextViewText(R.id.subtitle, musicData.description)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            notificationLayoutExpanded.setColorAttr(R.id.line1,  "",  musicData.color)
+//        }
 
         val customNotification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.notification_icon)
             .setContentTitle("My notification")
-//            .setContentText("Hello World!")
-//            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setContent(notificationLayoutExpanded)
-//            .setCustomContentView(notificationLayoutExpanded)
+            .setContentText("Hello World!")
+//            .setStyle(NotificationCompat.DecoratedCustomViewStyle().)
+            .setContent(notificationLayout)
+            .setCustomContentView(notificationLayout)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(pendingIntent)
-//            .setCustomBigContentView(notificationLayoutExpanded)
+            .setCustomBigContentView(notificationLayoutExpanded)
             .setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_SOUND)
-            .setLights(Color.WHITE, 500, 500)
+            .setColor(musicData.color)
+            .setColorized(true)
+            .setLights(musicData.color, 500, 500)
             .build()
 
 //        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
@@ -116,9 +118,10 @@ class MainActivity : AppCompatActivity() {
     private fun loadExpandedDetails(notificationLayoutExpanded: RemoteViews, musicData: MusicData){
         notificationLayoutExpanded.setTextViewText(R.id.title, musicData.title)
         notificationLayoutExpanded.setTextViewText(R.id.subtitle, musicData.description)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            notificationLayoutExpanded.setColorAttr(R.id.line1,  "",  musicData.color)
-        }
+        notificationLayoutExpanded.setInt(R.id.line1, "setBackgroundColor", musicData.color);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            notificationLayoutExpanded.setColorAttr(R.id.line1,  "",  musicData.color)
+//        }
     }
 
 }
