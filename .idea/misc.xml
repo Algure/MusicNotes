@@ -3,8 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/ic_arrow_left.xml" value="0.2265625" />
+        <entry key="app/src/main/res/drawable/ic_arrow_right.xml" value="0.2265625" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.16530797101449277" />
-        <entry key="app/src/main/res/layout/notification_large.xml" value="0.4657490999494795" />
+        <entry key="app/src/main/res/layout/notification_large.xml" value="0.1" />
         <entry key="app/src/main/res/layout/notification_small.xml" value="0.16458333333333333" />
       </map>
     </option>

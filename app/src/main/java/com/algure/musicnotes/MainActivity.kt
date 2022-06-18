@@ -18,9 +18,23 @@ import com.algure.musicnotes.objects.MusicData
 import androidx.core.app.NotificationManagerCompat
 
 
+
+
+
 class MainActivity : AppCompatActivity() {
     private val notificationId: Int = 900
     private val CHANNEL_ID: String = "CHANNEL_U"
+
+    val musicTestData:List<MusicData> = mutableListOf(
+        MusicData(title = "Test title 1", description = "dfvcdfvdfvd fvdfnv", color = Color.BLACK),
+        MusicData(title = "Test title 2", description = "dfvcdfvdfvd fvdfnv", color = Color.parseColor("#FF0000")),
+        MusicData(title = "Test title 3", description = "dfvcdfvdfvd fvdfnv", color = Color.parseColor("#11AA00")),
+        MusicData(title = "Test title 4", description = "dfvcdfvdfvd fvdfnv", color = Color.parseColor("#22AA99")),
+        MusicData(title = "Test title 5", description = "dfvcdfvdfvd fvdfnv", color = Color.parseColor("#22AA55")),
+        MusicData(title = "Test title 6", description = "dfvcdfvdfvd fvdfnv", color = Color.parseColor("#1100FF")),
+        MusicData(title = "Test title 7", description = "dfvcdfvdfvd fvdfnv", color = Color.parseColor("#FF00FF")),
+        MusicData(title = "Test title 8", description = "dfvcdfvdfvd fvdfnv", color = Color.parseColor("#AA00FF")),
+    )
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,17 +89,10 @@ class MainActivity : AppCompatActivity() {
 
         notificationLayout.setTextViewText(R.id.notification_title, musicData.title)
 
-//        notificationLayoutExpanded.setTextViewText(R.id.title, musicData.title)
-//        notificationLayoutExpanded.setTextViewText(R.id.subtitle, musicData.description)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//            notificationLayoutExpanded.setColorAttr(R.id.line1,  "",  musicData.color)
-//        }
-
         val customNotification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.notification_icon)
             .setContentTitle("My notification")
             .setContentText("Hello World!")
-//            .setStyle(NotificationCompat.DecoratedCustomViewStyle().)
             .setContent(notificationLayout)
             .setCustomContentView(notificationLayout)
             .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -98,30 +105,23 @@ class MainActivity : AppCompatActivity() {
             .setLights(musicData.color, 500, 500)
             .build()
 
-//        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-//            .setSmallIcon(R.drawable.notification_icon)
-//            .setContentTitle("My notification")
-//            .setContentText("Hello World!")
-//            .setPriority(NotificationCompat.PRIORITY_MAX)
-//            .setContentIntent(pendingIntent)
-//            .setAutoCancel(true)
+
 
         with(NotificationManagerCompat.from(this)) {
             notify(notificationId, customNotification)
         }
     }
 
+
     private fun loadSmallNotification(notificationLayout: RemoteViews, musicData: MusicData) {
         notificationLayout.setTextViewText(R.id.notification_title, musicData.title)
     }
 
+
     private fun loadExpandedDetails(notificationLayoutExpanded: RemoteViews, musicData: MusicData){
         notificationLayoutExpanded.setTextViewText(R.id.title, musicData.title)
         notificationLayoutExpanded.setTextViewText(R.id.subtitle, musicData.description)
-        notificationLayoutExpanded.setInt(R.id.line1, "setBackgroundColor", musicData.color);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//            notificationLayoutExpanded.setColorAttr(R.id.line1,  "",  musicData.color)
-//        }
+        notificationLayoutExpanded.setInt(R.id.line1, "setBackgroundColor", musicData.color)
     }
 
 }
