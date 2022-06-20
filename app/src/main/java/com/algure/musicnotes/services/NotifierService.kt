@@ -19,16 +19,20 @@ import com.algure.musicnotes.provider.DataProvider
 
 
 class NotifierService  : Service() {
-    private var startMode: Int = 0             // indicates how to behave if the service is killed
-    private var binder: IBinder? = null        // interface for clients that bind
-    private var allowRebind: Boolean = false   // indicates whether onRebind should be used
+    private var startMode: Int = 0
+    private var binder: IBinder? = null
+    private var allowRebind: Boolean = false
 
 
     companion object {
         private var currentMusic = 0
 
-        fun getCurrentMusic(): Int{
+        fun getCurrentMusic(): Int {
             return currentMusic
+        }
+
+        fun setCurrentMusic(i:Int) {
+            currentMusic = i
         }
     }
 
@@ -39,36 +43,36 @@ class NotifierService  : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        var todo = "dfvdfv"
-        if(intent != null){
+        var todo = ""
+        if (intent != null) {
             todo = intent.getBundleExtra("whattodo").toString()
-            if (todo == "null"){
+            if (todo == "null") {
                 runNotes(currentMusic)
-            }else if(todo == "next"){
+            } else if (todo == "next") {
                 runNotes(++currentMusic)
-            }else if(todo == "prev"){
+            } else if (todo == "prev") {
                 runNotes(--currentMusic)
-            } else{
+            } else {
                 runNotes(currentMusic)
             }
-        }else{
+        } else {
             runNotes(currentMusic)
         }
-        Log.i("todo","todo: $todo")
+        Log.i("todo", "todo: $todo")
 
-        Toast.makeText(applicationContext,"Started service ",Toast.LENGTH_LONG).show()
+        Toast.makeText(applicationContext, "Started service ", Toast.LENGTH_LONG).show()
         return startMode
     }
 
 
-
     private fun runNotes(currentMusic: Int) {
         Log.i("currentMusic", "currentMusic: $currentMusic")
-        if(currentMusic >= DataProvider.musicTestData.size || currentMusic < 0){
+        if (currentMusic >= DataProvider.musicTestData.size || currentMusic < 0) {
             this.stopSelf()
-        }else {
+        } else {
             Thread(
-                NoteCountRunnable(musicData = DataProvider.musicTestData[currentMusic], context = this,
+                NoteCountRunnable(musicData = DataProvider.musicTestData[currentMusic],
+                    context = this,
                     doWhenDone = { onNoteRan() })
             ).run()
         }
@@ -99,17 +103,12 @@ class NotifierService  : Service() {
 
 
     inner class NoticeBinder : Binder() {
-        // Return this instance of LocalService so clients can call public methods
         fun getService(): NotifierService = this@NotifierService
     }
-
-
 }
 
 
-
 class NoteCountRunnable(musicData: MusicData, context:Context,  doWhenDone:()-> Unit): Runnable {
-
     private val notificationId: Int = 1001
     private val CHANNEL_ID: String = "NotesAppID"
     private var context: Context
@@ -123,8 +122,8 @@ class NoteCountRunnable(musicData: MusicData, context:Context,  doWhenDone:()-> 
         this.context = context
 
         this.doWhenDone = doWhenDone
-
     }
+
 
     override fun run() {
         println("${Thread.currentThread()} has run.")
@@ -132,21 +131,18 @@ class NoteCountRunnable(musicData: MusicData, context:Context,  doWhenDone:()-> 
 
         var totalSecs = 0
 
-        while(totalSecs < musicData.lengthInSec){
-            makeNShowNotificationWithDets(notificationBuiler, totalSecs)
-            Thread.sleep(1000)
-            if (DataProvider.musicTestData[NotifierService.getCurrentMusic()] != musicData){
-                this.
-            }
-            totalSecs ++
+        makeNShowNotificationWithDets(notificationBuiler, totalSecs)
+        Thread.sleep((1000 *  musicData.lengthInSec).toLong())
+        if (DataProvider.musicTestData[NotifierService.getCurrentMusic()] != musicData){
+           return
         }
         doWhenDone.invoke()
     }
 
 
-    fun makeNShowNotificationWithDets( customNotificationBuilder : NotificationCompat.Builder?, secs:Int = 0) : NotificationCompat.Builder {
-
-        val normIntent = Intent(context, MainActivity::class.java);
+    fun makeNShowNotificationWithDets( customNotificationBuilder : NotificationCompat.Builder?, secs:Int = 0) :
+            NotificationCompat.Builder {
+        val normIntent = Intent(context, MainActivity::class.java)
         val nextIntent = Intent(context, NotifierService::class.java)
         val prevIntent = Intent(context, NotifierService::class.java)
 
@@ -184,7 +180,6 @@ class NoteCountRunnable(musicData: MusicData, context:Context,  doWhenDone:()-> 
                 .setContentIntent(pendingIntent)
                 .setCustomBigContentView(notificationLayoutExpanded)
                 .setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_SOUND)
                 .setColor(musicData.color)
                 .setColorized(true)
                 .setLights(musicData.color, 500, 500)
@@ -197,7 +192,7 @@ class NoteCountRunnable(musicData: MusicData, context:Context,  doWhenDone:()-> 
         with(NotificationManagerCompat.from(context)) {
             notify(notificationId, customNotificationBuilder.build())
         }
-        return  customNotificationBuilder
+        return customNotificationBuilder
     }
 
 
@@ -231,6 +226,5 @@ class NoteCountRunnable(musicData: MusicData, context:Context,  doWhenDone:()-> 
             notificationManager.createNotificationChannel(channel)
         }
     }
-
 
 }
